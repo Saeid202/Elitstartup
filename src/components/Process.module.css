@@ -1,0 +1,201 @@
+.processSection {
+  position: relative;
+  padding: 8rem 0 4rem 0;
+  background-color: var(--primary-bg);
+  overflow: hidden;
+}
+
+.glowSpot {
+  composes: glow-spot from global;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  opacity: 0.3;
+}
+
+.container {
+  composes: container from global;
+  position: relative;
+  z-index: 5;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.titleHighlight {
+  color: var(--accent-gold);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* Timeline Layout */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Vertical Line down the center for larger screens */
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 50%;
+  width: 2px;
+  background: linear-gradient(180deg, var(--border-gold) 0%, var(--accent-gold) 50%, var(--border-gold) 100%);
+  transform: translateX(-50%);
+}
+
+.stepWrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.stepWrapper:nth-child(odd) {
+  justify-content: flex-start;
+}
+
+.stepWrapper:nth-child(even) {
+  justify-content: flex-end;
+}
+
+/* Central Indicator Point */
+.timelineDot {
+  position: absolute;
+  left: 50%;
+  top: 25px;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--secondary-bg);
+  border: 3px solid var(--accent-gold);
+  box-shadow: 0 0 10px var(--accent-gold);
+  z-index: 10;
+  transition: var(--transition-smooth);
+}
+
+.stepWrapper:hover .timelineDot {
+  background: var(--accent-gold);
+  transform: translate(-50%, -50%) scale(1.25);
+  box-shadow: 0 0 18px var(--accent-gold);
+}
+
+/* Step Card */
+.stepCard {
+  composes: gold-card from global;
+  width: 45%;
+  padding: 2.2rem;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stepNumber {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 4rem;
+  font-weight: 900;
+  color: rgba(197, 168, 128, 0.04);
+  line-height: 1;
+  pointer-events: none;
+  font-family: var(--font-family-serif);
+}
+
+[dir="rtl"] .stepNumber {
+  right: auto;
+  left: 1.5rem;
+}
+
+.iconContainer {
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.stepCard:hover .iconContainer {
+  background: var(--accent-gold);
+  color: var(--text-dark);
+  transform: rotate(5deg) scale(1.05);
+}
+
+.stepTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.5rem;
+}
+
+.stepDesc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .timeline::before {
+    left: 20px;
+  }
+  
+  [dir="rtl"] .timeline::before {
+    left: auto;
+    right: 20px;
+  }
+
+  .stepWrapper {
+    justify-content: flex-end !important;
+  }
+  
+  [dir="rtl"] .stepWrapper {
+    justify-content: flex-start !important;
+    padding-right: 45px;
+  }
+
+  .timelineDot {
+    left: 20px;
+  }
+  
+  [dir="rtl"] .timelineDot {
+    left: auto;
+    right: 20px;
+  }
+
+  .stepCard {
+    width: calc(100% - 45px);
+    padding: 1.8rem;
+  }
+}

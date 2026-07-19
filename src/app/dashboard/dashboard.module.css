@@ -1,0 +1,674 @@
+.page {
+  background-color: var(--primary-bg);
+  min-height: 100vh;
+  padding-top: 170px;
+  padding-bottom: 6rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.glowSpot {
+  composes: glow-spot from global;
+  top: 10%;
+  right: -10%;
+}
+
+.glowSpot2 {
+  composes: glow-spot from global;
+  bottom: 20%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(197, 168, 128, 0.15) 0%, transparent 70%);
+}
+
+.container {
+  composes: container from global;
+  position: relative;
+  z-index: 5;
+  max-width: 1400px !important;
+  width: 90% !important;
+}
+
+.dashboardLayout {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.sidebar {
+  composes: gold-card from global;
+  background: rgba(11, 21, 36, 0.25) !important;
+  border: 1px solid var(--border-gold) !important;
+  width: 320px;
+  flex-shrink: 0;
+  padding: 2.5rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.1);
+  padding-bottom: 1.5rem;
+}
+
+.avatar {
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(197, 168, 128, 0.15);
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  overflow: hidden;
+  text-align: right;
+}
+
+[dir="ltr"] .userDetails {
+  text-align: left;
+}
+
+.userName {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.userEmail {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.menuItem {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: var(--transition-smooth);
+  width: 100%;
+}
+
+[dir="rtl"] .menuItem {
+  flex-direction: row;
+}
+
+[dir="ltr"] .menuItem {
+  flex-direction: row;
+}
+
+.menuItem:hover {
+  background: rgba(197, 168, 128, 0.05);
+  color: var(--accent-gold);
+}
+
+.menuItem.active {
+  background: rgba(197, 168, 128, 0.08);
+  border-color: rgba(197, 168, 128, 0.2);
+  color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(197, 168, 128, 0.05);
+}
+
+.logoutBtn {
+  margin-top: 1.5rem;
+  color: #ef4444;
+  border-top: 1px solid rgba(239, 68, 68, 0.1);
+  border-radius: 0;
+  padding-top: 1.5rem;
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.05);
+  color: #f87171;
+}
+
+/* Content Area */
+.contentArea {
+  flex: 1;
+  min-width: 0;
+}
+
+.tabContent {
+  composes: gold-card from global;
+  background: rgba(11, 21, 36, 0.25) !important;
+  border: 1px solid var(--border-gold) !important;
+  padding: 3rem;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Welcome Banner */
+.welcomeBanner {
+  background: linear-gradient(135deg, rgba(197, 168, 128, 0.1) 0%, rgba(11, 21, 36, 0.4) 100%);
+  border: 1px solid rgba(197, 168, 128, 0.15);
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.welcomeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+[dir="ltr"] .welcomeInfo {
+  text-align: left;
+}
+
+.welcomeInfo h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+.welcomeInfo p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.welcomeIcon {
+  color: var(--accent-gold);
+  background: rgba(197, 168, 128, 0.08);
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(197, 168, 128, 0.2);
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.statCard {
+  background: rgba(5, 11, 20, 0.4);
+  border: 1px solid rgba(197, 168, 128, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  text-align: right;
+}
+
+[dir="ltr"] .statCard {
+  text-align: left;
+}
+
+.statCard h4 {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.statNum {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  line-height: 1;
+}
+
+.statVal {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.statusComplete {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.statusIncomplete {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+/* Recent Panel */
+.recentPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: right;
+}
+
+[dir="ltr"] .recentPanel {
+  text-align: left;
+}
+
+.recentPanel h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.1);
+  padding-bottom: 0.8rem;
+}
+
+.emptyOverview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  gap: 1.5rem;
+  text-align: center;
+  background: rgba(5, 11, 20, 0.2);
+  border: 1px dashed rgba(197, 168, 128, 0.15);
+  border-radius: 12px;
+}
+
+.emptyOverview p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
+
+.browseBtn {
+  composes: btn-gold from global;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Timeline */
+.timelineList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.timelineItem {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.2rem 1.5rem;
+  background: rgba(5, 11, 20, 0.3);
+  border: 1px solid rgba(197, 168, 128, 0.08);
+  border-radius: 10px;
+}
+
+.timelineBullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--accent-gold);
+  box-shadow: 0 0 8px var(--accent-gold-glow);
+  flex-shrink: 0;
+}
+
+.timelineInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: right;
+}
+
+[dir="ltr"] .timelineInfo {
+  text-align: left;
+}
+
+.timelineInfo h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timelineRole {
+  font-size: 0.9rem;
+  color: var(--accent-gold);
+}
+
+.timelineDate {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.statusBadge {
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Card Header */
+.cardHeader {
+  border-bottom: 1px solid rgba(197, 168, 128, 0.1);
+  padding-bottom: 1.2rem;
+  text-align: right;
+}
+
+[dir="ltr"] .cardHeader {
+  text-align: left;
+}
+
+.cardHeader h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  margin-bottom: 0.4rem;
+}
+
+.cardHeader p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* Success Message */
+.successMessage {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: right;
+}
+
+[dir="ltr"] .successMessage {
+  text-align: left;
+}
+
+/* Forms */
+.profileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+[dir="ltr"] .formGroup {
+  text-align: left;
+}
+
+.formGroup label {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  right: 1.2rem;
+  color: var(--accent-gold);
+  opacity: 0.7;
+}
+
+[dir="ltr"] .inputIcon {
+  right: auto;
+  left: 1.2rem;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  background: rgba(5, 11, 20, 0.6);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  padding-right: 3.2rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: var(--transition-smooth);
+}
+
+[dir="ltr"] .formGroup input,
+[dir="ltr"] .formGroup textarea {
+  padding-right: 1.2rem;
+  padding-left: 3.2rem;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: var(--accent-gold-hover);
+  box-shadow: 0 0 12px var(--accent-gold-glow);
+  background: rgba(5, 11, 20, 0.8);
+}
+
+.saveBtn {
+  composes: btn-gold from global;
+  align-self: flex-end;
+  padding: 0.8rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: none;
+}
+
+/* Interests Tab */
+.interestsSpinner {
+  display: flex;
+  justify-content: center;
+  padding: 4rem;
+}
+
+.interestsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+.interestCard {
+  background: rgba(5, 11, 20, 0.35);
+  border: 1px solid rgba(197, 168, 128, 0.12);
+  border-radius: 12px;
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  text-align: right;
+  transition: var(--transition-smooth);
+}
+
+[dir="ltr"] .interestCard {
+  text-align: left;
+}
+
+.interestCard:hover {
+  border-color: rgba(197, 168, 128, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.interestHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.08);
+  padding-bottom: 1rem;
+}
+
+.interestHeader h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.badgeUnderReview {
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  padding: 0.25rem 0.7rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.interestMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.metaRow {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.metaRow strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.metaRow span {
+  color: var(--text-primary);
+}
+
+.interestMessage {
+  background: rgba(5, 11, 20, 0.4);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.interestMessage h5 {
+  font-size: 0.85rem;
+  color: var(--accent-gold);
+  font-weight: 700;
+}
+
+.interestMessage p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(197, 168, 128, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--accent-gold);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsiveness */
+@media (max-width: 992px) {
+  .dashboardLayout {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .formGroup[style*="gridColumn: span 2"] {
+    grid-column: span 1 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabContent {
+    padding: 2rem 1.5rem;
+  }
+
+  .welcomeBanner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .welcomeIcon {
+    order: -1;
+  }
+}
