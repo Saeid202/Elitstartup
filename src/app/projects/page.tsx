@@ -5,46 +5,33 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/context/LanguageContext";
+import { getProjectLogoPublicUrl } from "@/lib/projects";
+import { fetchPublishedProjects, type StartupProjectRecord } from "@/lib/projects";
 import { motion, AnimatePresence } from "framer-motion";
 import { Leaf, Activity, TrendingUp, Check, ArrowLeft, ArrowRight } from "lucide-react";
 import styles from "./projects.module.css";
 
-type ProjectCategory = "all" | "green" | "health" | "finance";
+interface DisplayProject {
+  id: string;
+  title: string;
+  category: string;
+  losStatus: string;
+  description: string;
+  benefits: string[];
+  sector: string;
+  requiredRoles: string;
+  showDesignatedOrg: boolean;
+  designatedOrgType: string | null;
+  currentPhase: string;
+  availableCountries: string;
+  logoUrl: string | null;
+  websiteUrl: string | null;
+}
 
 export default function ProjectsPage() {
   const { t, locale, dir } = useLanguage();
-  const [activeFilter, setActiveFilter] = useState<ProjectCategory>("all");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = t.projectsSlider || [];
-
-  useEffect(() => {
-    if (slides.length === 0) return;
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [slides.length]);
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const scrollToProject = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      const headerOffset = 130;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-    }
-  };
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [projects, setProjects] = useState<DisplayProject[]>([]);
 
   useEffect(() => {
     // If there is a hash in the URL (e.g. #eco-track), scroll to it smoothly
@@ -65,6 +52,58 @@ export default function ProjectsPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const loadProjects = async () => {
+      const dbProjects = await fetchPublishedProjects();
+      if (dbProjects.length > 0) {
+        setProjects(
+          dbProjects.map((project: StartupProjectRecord) => ({
+            id: project.slug,
+            title: project.title,
+            category: project.category,
+            losStatus: project.los_status,
+            description: project.description,
+            benefits: project.benefits || [],
+            sector: project.sector,
+            requiredRoles: project.required_roles,
+            showDesignatedOrg: project.show_designated_org,
+            designatedOrgType: project.designated_org_type,
+            currentPhase: project.current_phase,
+            availableCountries: project.available_countries,
+            logoUrl: getProjectLogoPublicUrl(project.logo_path),
+            websiteUrl: project.website_url,
+          }))
+        );
+        return;
+      }
+
+      setProjects(
+        t.projects.list.map((project) => ({
+          id: project.id,
+          title: project.title,
+          category: project.category,
+          losStatus: project.id === "med-vibe" ? t.projects.statusReady : t.projects.statusCompleted,
+          description: project.description,
+          benefits: project.benefits,
+          sector: project.category,
+          requiredRoles: locale === "fa" ? "در حال تکمیل" : "To be updated",
+          showDesignatedOrg: false,
+          designatedOrgType: null,
+          currentPhase: locale === "fa" ? "در حال تکمیل" : "To be updated",
+          availableCountries: locale === "fa" ? "در حال تکمیل" : "To be updated",
+          logoUrl: null,
+          websiteUrl: null,
+        }))
+      );
+    };
+
+    loadProjects();
+  }, [locale, t.projects.list, t.projects.statusCompleted, t.projects.statusReady]);
+
+  useEffect(() => {
+    setActiveFilter("all");
+  }, [projects]);
+
   const getProjectIcon = (id: string) => {
     switch (id) {
       case "eco-track":
@@ -78,71 +117,39 @@ export default function ProjectsPage() {
     }
   };
 
+  const categoryFilters = [
+    "all",
+    ...Array.from(new Set(projects.map((project) => project.category).filter(Boolean))),
+  ];
+
   // Localized static labels
   const labels = {
     fa: {
       all: "همه پروژه‌ها",
-      green: "تکنولوژی سبز",
-      health: "سلامت دیجیتال",
-      finance: "فناوری مالی",
       sector: "حوزه فعالیت:",
       requiredRole: "نقش‌های مورد نیاز:",
       designatedOrg: "نوع سازمان حمایتی:",
       phase: "مراحل طی شده:",
-      roles: {
-        "eco-track": "هم‌بنیان‌گذار ارشد (CTO) / مدیر فنی",
-        "med-vibe": "هم‌بنیان‌گذار بازاریابی (CMO) / مدیر فروش",
-        "fin-flow": "هم‌بنیان‌گذار عملیات (COO) / مدیر اجرایی"
-      },
-      org: {
-        "eco-track": "انکوباتور رسمی عضو سازمان مهاجرت (Designated Incubator)",
-        "med-vibe": "گروه فرشتگان سرمایه‌گذار رسمی (Angel Investor Group)",
-        "fin-flow": "انکوباتور رسمی بین‌المللی (Designated Incubator)"
-      },
-      phaseVal: {
-        "eco-track": "نامه حمایتی اخذ شده - در مرحله سابمیت پرونده مهاجرتی",
-        "med-vibe": "بیزنس پلن نهایی - در حال دفاع در انکوباتور",
-        "fin-flow": "نامه حمایتی فعال - آماده اقدام جهت ویزای کار"
-      },
+      countries: "کشورهای قابل ارائه:",
       applyBtn: "درخواست هم‌بنیان‌گذاری در واتس‌اپ",
       whatsappMsg: (title: string) => `سلام وقت بخیر. من علاقمند به هم‌بنیان‌گذاری و بررسی شرایط در پروژه استارتاپی ${title} هستم. لطفاً راهنمایی بفرمایید.`
     },
     en: {
       all: "All Projects",
-      green: "GreenTech",
-      health: "HealthTech",
-      finance: "FinTech",
       sector: "Sector:",
       requiredRole: "Required Role:",
       designatedOrg: "Designated Org Type:",
       phase: "Current Phase:",
-      roles: {
-        "eco-track": "Technical Co-founder / Chief Technology Officer (CTO)",
-        "med-vibe": "Marketing Co-founder / Chief Marketing Officer (CMO)",
-        "fin-flow": "Operations Co-founder / Chief Operating Officer (COO)"
-      },
-      org: {
-        "eco-track": "Designated Business Incubator (Approved Org)",
-        "med-vibe": "Designated Angel Investor Group (Approved Org)",
-        "fin-flow": "Designated Business Incubator (Approved Org)"
-      },
-      phaseVal: {
-        "eco-track": "LOS Issued - Currently Preparing Work Permit Submission",
-        "med-vibe": "Business Plan Finalized - Pitching to Designates",
-        "fin-flow": "LOS Active - Ready for Work Permit & PR Action"
-      },
+      countries: "Available Countries:",
       applyBtn: "Apply for Co-founder via WhatsApp",
       whatsappMsg: (title: string) => `Hello. I am interested in joining the ${title} project as a co-founder. Could you please provide more information?`
     }
   }[locale];
 
   // Filter projects based on active selection
-  const filteredProjects = t.projects.list.filter((project) => {
+  const filteredProjects = projects.filter((project) => {
     if (activeFilter === "all") return true;
-    if (activeFilter === "green") return project.id === "eco-track";
-    if (activeFilter === "health") return project.id === "med-vibe";
-    if (activeFilter === "finance") return project.id === "fin-flow";
-    return true;
+    return project.category === activeFilter;
   });
 
   return (
@@ -184,16 +191,13 @@ export default function ProjectsPage() {
 
           {/* Filter Navigation */}
           <div className={styles.filterBar}>
-            {(["all", "green", "health", "finance"] as ProjectCategory[]).map((filter) => (
+            {categoryFilters.map((filter) => (
               <button
                 key={filter}
                 className={`${styles.filterBtn} ${activeFilter === filter ? styles.activeFilter : ""}`}
                 onClick={() => setActiveFilter(filter)}
               >
-                {filter === "all" && labels.all}
-                {filter === "green" && labels.green}
-                {filter === "health" && labels.health}
-                {filter === "finance" && labels.finance}
+                {filter === "all" ? labels.all : filter}
               </button>
             ))}
           </div>
@@ -215,16 +219,43 @@ export default function ProjectsPage() {
                   {/* Card Header */}
                   <div className={styles.cardHeader}>
                     <div className={styles.titleSection}>
-                      <div className={styles.iconWrapper}>
-                        {getProjectIcon(project.id)}
-                      </div>
-                      <div>
-                        <span className={styles.categoryTag}>{project.category}</span>
-                        <h2 className={styles.projectTitle}>{project.title}</h2>
-                      </div>
+                      {project.websiteUrl ? (
+                        <a
+                          href={project.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.projectIdentityLink}
+                        >
+                          <div className={styles.iconWrapper}>
+                            {project.logoUrl ? (
+                              <img src={project.logoUrl} alt={`${project.title} logo`} className={styles.projectLogoImage} />
+                            ) : (
+                              getProjectIcon(project.id)
+                            )}
+                          </div>
+                          <div>
+                            <span className={styles.categoryTag}>{project.category}</span>
+                            <h2 className={styles.projectTitle}>{project.title}</h2>
+                          </div>
+                        </a>
+                      ) : (
+                        <>
+                          <div className={styles.iconWrapper}>
+                            {project.logoUrl ? (
+                              <img src={project.logoUrl} alt={`${project.title} logo`} className={styles.projectLogoImage} />
+                            ) : (
+                              getProjectIcon(project.id)
+                            )}
+                          </div>
+                          <div>
+                            <span className={styles.categoryTag}>{project.category}</span>
+                            <h2 className={styles.projectTitle}>{project.title}</h2>
+                          </div>
+                        </>
+                      )}
                     </div>
                     <span className={styles.statusBadge}>
-                      {project.id === "med-vibe" ? t.projects.statusReady : t.projects.statusCompleted}
+                      {project.losStatus}
                     </span>
                   </div>
 
@@ -257,28 +288,29 @@ export default function ProjectsPage() {
                       <div className={styles.specsTable}>
                         <div className={styles.tableRow}>
                           <span className={styles.tableLabel}>{labels.sector}</span>
-                          <span className={styles.tableValue}>{project.category}</span>
+                          <span className={styles.tableValue}>{project.sector}</span>
                         </div>
 
                         <div className={styles.tableRow}>
                           <span className={styles.tableLabel}>{labels.requiredRole}</span>
-                          <span className={styles.tableValue}>
-                            {labels.roles[project.id as keyof typeof labels.roles]}
-                          </span>
+                          <span className={styles.tableValue}>{project.requiredRoles}</span>
                         </div>
 
-                        <div className={styles.tableRow}>
-                          <span className={styles.tableLabel}>{labels.designatedOrg}</span>
-                          <span className={styles.tableValue}>
-                            {labels.org[project.id as keyof typeof labels.org]}
-                          </span>
-                        </div>
+                        {project.showDesignatedOrg && project.designatedOrgType && (
+                          <div className={styles.tableRow}>
+                            <span className={styles.tableLabel}>{labels.designatedOrg}</span>
+                            <span className={styles.tableValue}>{project.designatedOrgType}</span>
+                          </div>
+                        )}
 
                         <div className={styles.tableRow}>
                           <span className={styles.tableLabel}>{labels.phase}</span>
-                          <span className={styles.tableValue}>
-                            {labels.phaseVal[project.id as keyof typeof labels.phaseVal]}
-                          </span>
+                          <span className={styles.tableValue}>{project.currentPhase}</span>
+                        </div>
+
+                        <div className={styles.tableRow}>
+                          <span className={styles.tableLabel}>{labels.countries}</span>
+                          <span className={styles.tableValue}>{project.availableCountries}</span>
                         </div>
                       </div>
 

@@ -7,6 +7,8 @@ import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { ProjectsAdminPanel } from "@/components/admin/ProjectsAdminPanel";
+import { CollaborationOpportunitiesAdminPanel } from "@/components/admin/CollaborationOpportunitiesAdminPanel";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   User, 
@@ -20,11 +22,12 @@ import {
   Sparkles,
   Phone,
   Mail,
-  FileText
+  FileText,
+  Layers
 } from "lucide-react";
 import styles from "./dashboard.module.css";
 
-type TabType = "overview" | "profile" | "projects";
+type TabType = "overview" | "profile" | "projects" | "adminProjects" | "adminOpportunities";
 
 interface UserInterest {
   id: string;
@@ -149,6 +152,7 @@ export default function DashboardPage() {
   }
 
   const userDisplayName = profile?.full_name || user.email?.split("@")[0] || "User";
+  const isAdmin = profile?.is_admin === true;
 
   return (
     <>
@@ -196,6 +200,26 @@ export default function DashboardPage() {
                   <Briefcase size={20} />
                   <span>{locale === "fa" ? "پروژه‌های شما" : "Your Projects"}</span>
                 </button>
+
+                {isAdmin && (
+                  <button
+                    onClick={() => setActiveTab("adminProjects")}
+                    className={`${styles.menuItem} ${activeTab === "adminProjects" ? styles.active : ""}`}
+                  >
+                    <Briefcase size={20} />
+                    <span>{locale === "fa" ? "مدیریت پروژه ها" : "Projects Admin"}</span>
+                  </button>
+                )}
+
+                {isAdmin && (
+                  <button
+                    onClick={() => setActiveTab("adminOpportunities")}
+                    className={`${styles.menuItem} ${activeTab === "adminOpportunities" ? styles.active : ""}`}
+                  >
+                    <Layers size={20} />
+                    <span>{locale === "fa" ? "مدیریت فرصت های همکاری" : "Opportunities Admin"}</span>
+                  </button>
+                )}
 
                 <button onClick={signOut} className={`${styles.menuItem} ${styles.logoutBtn}`}>
                   <LogOut size={20} />
@@ -462,6 +486,32 @@ export default function DashboardPage() {
                         ))}
                       </div>
                     )}
+                  </motion.div>
+                )}
+
+                {activeTab === "adminProjects" && isAdmin && (
+                  <motion.div
+                    key="admin-projects"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className={styles.tabContent}
+                  >
+                    <ProjectsAdminPanel locale={locale} />
+                  </motion.div>
+                )}
+
+                {activeTab === "adminOpportunities" && isAdmin && (
+                  <motion.div
+                    key="admin-opportunities"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className={styles.tabContent}
+                  >
+                    <CollaborationOpportunitiesAdminPanel locale={locale} />
                   </motion.div>
                 )}
               </AnimatePresence>

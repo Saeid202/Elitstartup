@@ -30,6 +30,14 @@
   flex-direction: column;
 }
 
+.logoImage {
+  width: 230px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
 .logoText {
   font-size: 1.6rem;
   font-weight: 800;

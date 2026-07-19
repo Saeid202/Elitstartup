@@ -65,18 +65,31 @@ export default function SignUpPage() {
       }
 
       if (authData.user) {
-        // 2. Insert profile record in public.profiles table
-        const { error: profileError } = await supabase.from("profiles").insert({
-          id: authData.user.id,
-          full_name: formData.fullName,
-          phone: formData.phone,
-          email: formData.email,
-          bio: ""
-        });
+        // Insert profile only when signup returns an active session.
+        // If email confirmation is required, user is not authenticated yet and RLS can block this insert.
+        if (authData.session?.user) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .upsert(
+              {
+                id: authData.user.id,
+                full_name: formData.fullName,
+                phone: formData.phone,
+                email: formData.email,
+                bio: ""
+              },
+              { onConflict: "id" }
+            );
 
-        if (profileError) {
-          console.error("Error creating profile record:", profileError);
-          // Don't block signup if profile insert fails (e.g. RLS issues), AuthContext has a fallback
+          if (profileError) {
+            console.error("Error creating profile record:", {
+              message: profileError.message,
+              details: profileError.details,
+              hint: profileError.hint,
+              code: profileError.code
+            });
+            // Don't block signup if profile upsert fails, AuthContext has a fallback.
+          }
         }
 
         setIsSuccess(true);

@@ -31,7 +31,11 @@ export const Footer: React.FC = () => {
           {/* Brand Info Column */}
           <div className={styles.brandCol}>
             <div className={styles.logoContainer}>
-              <span className={styles.logoText}>{t.header.brand}</span>
+              <img
+                src="/elite-logo.png"
+                alt={t.header.brand}
+                className={styles.logoImage}
+              />
               <span className={styles.logoSubtext}>{t.header.brandSub}</span>
             </div>
             <p className={styles.brandDesc}>{t.footer.desc}</p>
@@ -85,8 +89,8 @@ export const Footer: React.FC = () => {
                   <span style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                     {t.footer.email}
                   </span>
-                  <a href="mailto:info@elitestartupvisa.com">
-                    info@elitestartupvisa.com
+                  <a href="mailto:shabani_saeid@hotmail.com">
+                    shabani_saeid@hotmail.com
                   </a>
                 </div>
               </li>
@@ -96,6 +100,14 @@ export const Footer: React.FC = () => {
                   <span style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                     {t.footer.address}
                   </span>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=1050+King+St+W+1st+Floor%2C+Toronto%2C+ON+M6K+0C7"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: "inline-block", direction: "ltr" }}
+                  >
+                    1050 King St W 1st Floor, Toronto, ON M6K 0C7
+                  </a>
                 </div>
               </li>
             </ul>

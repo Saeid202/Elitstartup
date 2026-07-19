@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { Globe, Menu, X, ArrowLeft, ArrowRight } from "lucide-react";
@@ -13,7 +13,9 @@ export const Header: React.FC = () => {
   const { user, signOut } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const isHomePage = pathname === "/";
 
@@ -30,8 +32,19 @@ export const Header: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Warm up common routes for faster first navigation in dev and production.
+    router.prefetch("/login");
+    router.prefetch("/signup");
+    router.prefetch("/projects");
+    if (user) {
+      router.prefetch("/dashboard");
+    }
+  }, [router, user]);
+
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     setMenuOpen(false);
+    setAccountMenuOpen(false);
     if (!isHomePage) {
       // If we are on the projects page, let the default Link navigation run
       return;
@@ -57,7 +70,11 @@ export const Header: React.FC = () => {
       <div className={styles.container}>
         {/* Logo */}
         <Link href="/" className={styles.logoContainer}>
-          <span className={styles.logoText}>{t.header.brand}</span>
+          <img
+            src="/elite-logo.png"
+            alt={t.header.brand}
+            className={styles.logoImage}
+          />
           <span className={styles.logoSubtext}>{t.header.brandSub}</span>
         </Link>
 
@@ -106,9 +123,42 @@ export const Header: React.FC = () => {
                 {locale === "fa" ? "ورود / ثبت‌نام" : "Login / Signup"}
               </Link>
             ) : (
-              <button onClick={() => { setMenuOpen(false); signOut(); }} className={styles.logoutBtn}>
-                {locale === "fa" ? "خروج" : "Logout"}
-              </button>
+              <div
+                className={`${styles.accountMenu} ${accountMenuOpen ? styles.accountMenuOpen : ""}`}
+                onMouseEnter={() => setAccountMenuOpen(true)}
+                onMouseLeave={() => setAccountMenuOpen(false)}
+              >
+                <button
+                  type="button"
+                  className={styles.dashboardMenuBtn}
+                  onClick={() => setAccountMenuOpen((prev) => !prev)}
+                >
+                  {locale === "fa" ? "داشبورد" : "Dashboard"}
+                </button>
+                <div className={styles.accountDropdown}>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setAccountMenuOpen(false);
+                    }}
+                    className={styles.accountMenuItem}
+                  >
+                    {locale === "fa" ? "داشبورد" : "Dashboard"}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setAccountMenuOpen(false);
+                      signOut();
+                    }}
+                    className={`${styles.accountMenuItem} ${styles.accountMenuLogout}`}
+                  >
+                    {locale === "fa" ? "خروج" : "Logout"}
+                  </button>
+                </div>
+              </div>
             )}
             <a
               href="https://wa.me/14168825015"
@@ -125,7 +175,10 @@ export const Header: React.FC = () => {
         {/* Burger Button for mobile */}
         <button
           className={styles.burger}
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => {
+            setMenuOpen(!menuOpen);
+            setAccountMenuOpen(false);
+          }}
           aria-label="Toggle menu"
         >
           {menuOpen ? <X size={26} /> : <Menu size={26} />}

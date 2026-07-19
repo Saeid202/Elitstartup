@@ -15,8 +15,7 @@ export const en = {
     description1: "Elite Startup Visa is a boutique consultancy specializing in global Startup Visa programs. By partnering directly with designated organizations (incubators and angel networks) and experienced immigration lawyers, we guide founders to successfully commercialize their innovations globally.",
     description2: "Our team includes business analysts, writers, legal advisors, and pitch coaches who support you from ideation and business plan development through mock sessions, designated organization pitching, and PR application support.",
     stats: [
-      { value: "98%", label: "Support Letter Success" },
-      { value: "+50", label: "Startup Ventures Designed" },
+      { value: "+10", label: "Startup Ventures Designed" },
       { value: "100%", label: "Quality & Transparency" }
     ]
   },

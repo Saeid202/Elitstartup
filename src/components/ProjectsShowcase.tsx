@@ -4,11 +4,53 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import { fetchPublishedProjects, type StartupProjectRecord } from "@/lib/projects";
 import { Check, ArrowLeft, ArrowRight, Activity, Leaf, TrendingUp } from "lucide-react";
 import styles from "./ProjectsShowcase.module.css";
 
+interface ShowcaseProject {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  benefits: string[];
+  losStatus: string;
+}
+
 export const ProjectsShowcase: React.FC = () => {
   const { t, dir } = useLanguage();
+  const [projects, setProjects] = React.useState<ShowcaseProject[]>([]);
+
+  React.useEffect(() => {
+    const loadProjects = async () => {
+      const dbProjects = await fetchPublishedProjects();
+      if (dbProjects.length > 0) {
+        const mapped = dbProjects.slice(0, 6).map((project: StartupProjectRecord) => ({
+          id: project.slug,
+          title: project.title,
+          category: project.category,
+          description: project.description,
+          benefits: project.benefits || [],
+          losStatus: project.los_status,
+        }));
+        setProjects(mapped);
+        return;
+      }
+
+      setProjects(
+        t.projects.list.map((project) => ({
+          id: project.id,
+          title: project.title,
+          category: project.category,
+          description: project.description,
+          benefits: project.benefits,
+          losStatus: t.projects.statusCompleted,
+        }))
+      );
+    };
+
+    loadProjects();
+  }, [t.projects.list, t.projects.statusCompleted]);
 
   const getProjectIcon = (id: string) => {
     switch (id) {
@@ -72,7 +114,7 @@ export const ProjectsShowcase: React.FC = () => {
 
         {/* Projects List */}
         <div className={styles.projectsList}>
-          {t.projects.list.map((project, index) => (
+          {projects.map((project, index) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 50 }}
@@ -100,7 +142,7 @@ export const ProjectsShowcase: React.FC = () => {
                 <div className={styles.tagRow}>
                   <span className={styles.categoryTag}>{project.category}</span>
                   <span className={styles.statusTag}>
-                    {index === 1 ? t.projects.statusReady : t.projects.statusCompleted}
+                    {project.losStatus || t.projects.statusCompleted}
                   </span>
                 </div>
                 

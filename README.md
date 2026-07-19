@@ -20,6 +20,18 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Admin Projects Dashboard Setup
+
+1. In Supabase SQL editor, run:
+	- `supabase/startup_projects.sql`
+2. Mark your admin user:
+	- In `profiles` table, set `is_admin = true` for your user row.
+3. Add admin emails to local and Vercel environment variables:
+	- `NEXT_PUBLIC_ADMIN_EMAILS=you@example.com,another@example.com`
+
+After login, admin users can manage projects in the dashboard under the `Projects Admin` tab.
+Published projects are shown on the public projects page and homepage showcase.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

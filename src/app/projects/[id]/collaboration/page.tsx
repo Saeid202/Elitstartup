@@ -7,6 +7,8 @@ import { Footer } from "@/components/Footer";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { fetchProjectOpportunities, type CollaborationOpportunity } from "@/lib/collaborationOpportunities";
+import { fetchPublishedProjects } from "@/lib/projects";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Building2, 
@@ -24,24 +26,12 @@ import {
 } from "lucide-react";
 import styles from "./collaboration.module.css";
 
-interface Opportunity {
-  id: string;
-  titleFa: string;
-  titleEn: string;
-  subtitleFa: string;
-  subtitleEn: string;
-  bulletsFa: string[];
-  bulletsEn: string[];
-  icon: React.ReactNode;
-}
-
 export default function CollaborationPage() {
   const { id } = useParams();
   const { locale, dir } = useLanguage();
   const router = useRouter();
   const { user, profile } = useAuth();
 
-  const [selectedRole, setSelectedRole] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -53,88 +43,67 @@ export default function CollaborationPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [opportunities, setOpportunities] = useState<CollaborationOpportunity[]>([]);
+  const [loadingOpportunities, setLoadingOpportunities] = useState(true);
 
-  // Set page title and dynamic project name
-  const getProjectName = () => {
-    switch (id) {
-      case "eco-track":
-        return "EcoTrack";
-      case "med-vibe":
-        return "MedVibe";
-      case "fin-flow":
+  useEffect(() => {
+    const loadProjectName = async () => {
+      const currentId = String(id || "");
+      const dbProjects = await fetchPublishedProjects();
+      const matched = dbProjects.find((project) => project.slug === currentId);
+      if (matched) {
+        setProjectName(matched.title);
+        return;
+      }
+
+      switch (currentId) {
+        case "eco-track":
+          setProjectName("EcoTrack");
+          break;
+        case "med-vibe":
+          setProjectName("MedVibe");
+          break;
+        case "fin-flow":
+          setProjectName("FinFlow");
+          break;
+        default:
+          setProjectName(currentId || "Project");
+          break;
+      }
+    };
+
+    loadProjectName();
+  }, [id]);
+
+  useEffect(() => {
+    const loadOpportunities = async () => {
+      const currentId = String(id || "");
+      setLoadingOpportunities(true);
+      const data = await fetchProjectOpportunities(currentId, false);
+      setOpportunities(data.filter((item) => item.isEnabled));
+      setLoadingOpportunities(false);
+    };
+
+    loadOpportunities();
+  }, [id]);
+
+  const getOpportunityIcon = (key: string) => {
+    switch (key) {
+      case "biz-dev":
+        return <Building2 size={28} />;
+      case "sales":
+        return <DollarSign size={28} />;
+      case "marketing":
+        return <Megaphone size={28} />;
+      case "dev":
+        return <Code size={28} />;
+      case "biz-partner":
+        return <Users size={28} />;
       default:
-        return "FinFlow";
+        return <Briefcase size={28} />;
     }
   };
-
-  const getProjectFullName = () => {
-    switch (id) {
-      case "eco-track":
-        return locale === "fa" ? "EcoTrack (سامانه هوشمند مدیریت پسماند صنعتی)" : "EcoTrack (Industrial Waste Management)";
-      case "med-vibe":
-        return locale === "fa" ? "MedVibe (پلتفرم تله‌مدیسین هوش مصنوعی)" : "MedVibe (Smart Telemedicine Platform)";
-      case "fin-flow":
-      default:
-        return locale === "fa" ? "FinFlow (پلتفرم مالی ابری برای کسب‌وکارهای کوچک)" : "FinFlow (Automated Financial Platform)";
-    }
-  };
-
-  const projectName = getProjectName();
-  const projectFullName = getProjectFullName();
-
-  // Opportunities Data
-  const opportunities: Opportunity[] = [
-    {
-      id: "biz-dev",
-      titleFa: "توسعه کسب‌وکار",
-      titleEn: "Business Development",
-      subtitleFa: "Business Development",
-      subtitleEn: "Business Development",
-      bulletsFa: ["جذب مشتری", "توسعه بازار", "مذاکره با شرکت‌ها"],
-      bulletsEn: ["Customer Acquisition", "Market Development", "Corporate Negotiation"],
-      icon: <Building2 size={28} />
-    },
-    {
-      id: "sales",
-      titleFa: "فروش محصولات",
-      titleEn: "Sales Partner",
-      subtitleFa: "Sales Partner",
-      subtitleEn: "Sales Partner",
-      bulletsFa: ["فروش خانه پیش‌ساخته", "فروش کابینت", "جذب پروژه"],
-      bulletsEn: ["Prefabricated House Sales", "Cabinet Sales", "Project Sourcing"],
-      icon: <DollarSign size={28} />
-    },
-    {
-      id: "marketing",
-      titleFa: "بازاریابی",
-      titleEn: "Marketing",
-      subtitleFa: "Marketing",
-      subtitleEn: "Marketing",
-      bulletsFa: ["دیجیتال مارکتینگ", "تبلیغات", "شبکه‌های اجتماعی"],
-      bulletsEn: ["Digital Marketing", "Advertising", "Social Media"],
-      icon: <Megaphone size={28} />
-    },
-    {
-      id: "dev",
-      titleFa: "توسعه نرم‌افزار",
-      titleEn: "Software Development",
-      subtitleFa: "Software Development",
-      subtitleEn: "Software Development",
-      bulletsFa: ["Frontend", "Backend", "AI"],
-      bulletsEn: ["Frontend", "Backend", "AI Integration"],
-      icon: <Code size={28} />
-    },
-    {
-      id: "biz-partner",
-      titleFa: "شریک تجاری",
-      titleEn: "Business Partner",
-      subtitleFa: "Business Partner",
-      subtitleEn: "Business Partner",
-      bulletsFa: ["مشارکت در مدیریت", "توسعه شرکت", "ایجاد ارتباطات تجاری"],
-      bulletsEn: ["Management Participation", "Company Growth", "Business Networking"],
-      icon: <Users size={28} />
-    }
-  ];
 
   // Benefits data
   const benefitsFa = [
@@ -297,16 +266,24 @@ export default function CollaborationPage() {
           </div>
 
           <div className={styles.oppsGrid}>
-            {opportunities.map((opp, idx) => (
+            {loadingOpportunities ? (
+              <div className={styles.emptyOverview}>
+                <p>{locale === "fa" ? "در حال بارگذاری فرصت‌ها..." : "Loading opportunities..."}</p>
+              </div>
+            ) : opportunities.length === 0 ? (
+              <div className={styles.emptyOverview}>
+                <p>{locale === "fa" ? "در حال حاضر فرصت فعالی تعریف نشده است." : "No active opportunities are configured yet."}</p>
+              </div>
+            ) : opportunities.map((opp, idx) => (
               <motion.div
-                key={opp.id}
+                key={opp.key}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 * idx }}
                 className={styles.oppCard}
               >
                 <div className={styles.oppHeader}>
-                  <div className={styles.oppIconWrapper}>{opp.icon}</div>
+                  <div className={styles.oppIconWrapper}>{getOpportunityIcon(opp.key)}</div>
                   <div>
                     <h3 className={styles.oppTitle}>{locale === "fa" ? opp.titleFa : opp.titleEn}</h3>
                     <span className={styles.oppSubtitle}>{locale === "fa" ? opp.subtitleFa : opp.subtitleEn}</span>
@@ -314,10 +291,17 @@ export default function CollaborationPage() {
                 </div>
                 
                 <ul className={styles.oppBullets}>
-                  {(locale === "fa" ? opp.bulletsFa : opp.bulletsEn).map((bullet, bIdx) => (
+                  {opp.items.filter((item) => item.enabled).map((item, bIdx) => (
                     <li key={bIdx} className={styles.oppBulletItem}>
                       <span className={styles.bulletCheck}></span>
-                      <span>{bullet}</span>
+                      <div className={styles.oppBulletContent}>
+                        <span className={styles.oppBulletTitle}>{locale === "fa" ? item.labelFa : item.labelEn}</span>
+                        {(locale === "fa" ? item.descriptionFa : item.descriptionEn) && (
+                          <span className={styles.oppBulletDescription}>
+                            {locale === "fa" ? item.descriptionFa : item.descriptionEn}
+                          </span>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -513,7 +497,7 @@ export default function CollaborationPage() {
                     >
                       <option value="">{locale === "fa" ? "-- انتخاب نقش --" : "-- Select Role --"}</option>
                       {opportunities.map(opp => (
-                        <option key={opp.id} value={locale === "fa" ? opp.titleFa : opp.titleEn}>
+                        <option key={opp.key} value={locale === "fa" ? opp.titleFa : opp.titleEn}>
                           {locale === "fa" ? opp.titleFa : opp.titleEn}
                         </option>
                       ))}

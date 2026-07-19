@@ -204,6 +204,22 @@
   margin-bottom: 6rem;
 }
 
+.emptyOverview {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: 170px;
+  background: rgba(5, 11, 20, 0.28);
+  border: 1px dashed rgba(197, 168, 128, 0.2);
+  border-radius: 12px;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1.5rem;
+}
+
 .oppCard {
   composes: gold-card from global;
   padding: 2.2rem;
@@ -260,10 +276,28 @@
 
 .oppBulletItem {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.8rem;
   font-size: 1.05rem;
   color: var(--text-secondary);
+}
+
+.oppBulletContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.oppBulletTitle {
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.oppBulletDescription {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .bulletCheck {

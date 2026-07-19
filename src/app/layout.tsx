@@ -29,6 +29,10 @@ export const metadata: Metadata = {
   title: "Elite Startup Visa | الیت استارتاپ ویزا",
   description: "خدمات تخصصی توسعه استارتاپ و اخذ ویزای استارتاپ بین‌المللی - از ایده تا اقامت دائم | Premium International Startup Visa Solutions",
   keywords: ["استارتاپ ویزا", "مهاجرت استارتاپی", "ویزای کار", "اقامت دائم", "شتاب دهنده بین المللی", "International Startup Visa", "Startup Program"],
+  icons: {
+    icon: "/elite-logo.png",
+    apple: "/elite-logo.png",
+  },
 };
 
 export default function RootLayout({

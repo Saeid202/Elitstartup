@@ -10,6 +10,7 @@ interface Profile {
   phone: string;
   email: string;
   bio: string;
+  is_admin?: boolean;
   updated_at?: string;
 }
 
@@ -48,7 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               full_name: authUser.user.user_metadata?.full_name || "",
               phone: authUser.user.user_metadata?.phone || "",
               email: authUser.user.email || "",
-              bio: ""
+              bio: "",
+              is_admin: false
             };
             const { error: insertError } = await supabase
               .from("profiles")

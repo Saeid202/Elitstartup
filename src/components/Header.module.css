@@ -34,6 +34,19 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  max-width: 210px;
+}
+
+.logoImage {
+  width: auto;
+  height: 54px;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.scrolled .logoImage {
+  height: 46px;
 }
 
 .logoText {
@@ -147,16 +160,72 @@
   border-color: var(--accent-gold) !important;
 }
 
-.logoutBtn {
+.accountMenu {
+  position: relative;
+}
+
+.dashboardMenuBtn {
   composes: langBtn;
-  border-color: rgba(239, 68, 68, 0.4);
+  color: var(--text-primary);
+  border-color: rgba(197, 168, 128, 0.4);
+}
+
+.dashboardMenuBtn:hover {
+  background: rgba(197, 168, 128, 0.12) !important;
+  border-color: var(--accent-gold) !important;
+}
+
+.accountDropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline-start: 0;
+  min-width: 170px;
+  padding: 0.4rem;
+  border-radius: 10px;
+  background: rgba(5, 11, 20, 0.98);
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  display: none;
+  z-index: 120;
+}
+
+.accountMenu:hover .accountDropdown,
+.accountMenu:focus-within .accountDropdown,
+.accountMenuOpen .accountDropdown {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.accountMenuItem {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.98rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.accountMenuItem:hover {
+  background: rgba(197, 168, 128, 0.12);
+  border-color: rgba(197, 168, 128, 0.35);
+}
+
+.accountMenuLogout {
   color: #ef4444;
 }
 
-.logoutBtn:hover {
-  background: rgba(239, 68, 68, 0.1) !important;
-  border-color: #ef4444 !important;
-  color: #f87171 !important;
+.accountMenuLogout:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #f87171;
 }
 
 .burger {
@@ -199,6 +268,14 @@
     align-items: flex-start;
     gap: 1.8rem;
   }
+
+  .logoImage {
+    height: 42px;
+  }
+
+  .logoContainer {
+    max-width: 155px;
+  }
   
   [dir="rtl"] .nav {
     right: auto;
@@ -227,6 +304,30 @@
   .langBtn {
     justify-content: center;
     width: 100%;
+  }
+
+  .accountMenu {
+    width: 100%;
+  }
+
+  .dashboardMenuBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .accountDropdown {
+    position: static;
+    display: none;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  .accountMenuOpen .accountDropdown {
+    display: grid;
+  }
+
+  .accountMenuItem {
+    justify-content: center;
   }
 
   .ctaBtn {
