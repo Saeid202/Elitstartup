@@ -10,6 +10,7 @@ interface Profile {
   phone: string;
   email: string;
   bio: string;
+  updated_at?: string;
 }
 
 interface AuthContextType {
